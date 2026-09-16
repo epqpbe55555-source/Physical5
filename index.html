@@ -482,7 +482,12 @@
   <section class="panel" id="flash">
     <div class="section-head">
       <h2>Flash Cards</h2>
-      <p>Tap a card to flip it. Covers every definition, formula and example from the lecture.</p>
+      <p>Tap a card to flip it. Choose a difficulty level below — each level covers every definition, formula and example from the lecture, at increasing depth.</p>
+    </div>
+    <div class="filter-row" id="flashLevelRow">
+      <button class="filter-chip active" data-level="easy">Level 1 · Easy (60)</button>
+      <button class="filter-chip" data-level="medium">Level 2 · Medium (50)</button>
+      <button class="filter-chip" data-level="hard">Level 3 · Hard (40)</button>
     </div>
     <div class="flash-toolbar">
       <span class="flash-count" id="flashCount"></span>
@@ -495,7 +500,12 @@
   <section class="panel" id="quiz">
     <div class="section-head">
       <h2>Quiz Bank</h2>
-      <p>39 multiple‑choice questions covering the full lecture. Answer options are shuffled every time you restart.</p>
+      <p>Choose a difficulty level below. Each level is a full multiple‑choice bank covering the lecture, at increasing depth. Answer options are shuffled every time you restart.</p>
+    </div>
+    <div class="filter-row" id="quizLevelRow">
+      <button class="filter-chip active" data-level="easy">Level 1 · Easy (60)</button>
+      <button class="filter-chip" data-level="medium">Level 2 · Medium (50)</button>
+      <button class="filter-chip" data-level="hard">Level 3 · Hard (40)</button>
     </div>
     <div class="quiz-top">
       <span class="score-pill" id="scorePill">Score: 0 / 0</span>
@@ -665,39 +675,174 @@ mapBranches.forEach(branch=>{
   branchesEl.appendChild(div);
 });
 
-/* ---------------- Section 4: flash cards ---------------- */
-let flashData = [
+/* ---------------- Section 4: flash cards (3 difficulty levels) ---------------- */
+const flashDataEasy = [
   {f:"System", b:"A bounded space or an exact quantity of a material substance."},
-  {f:"Dispersion", b:"≥2 phases: a dispersed (internal) phase in a continuous (external) phase."},
-  {f:"Phase", b:"A distinct homogeneous part of a system separated by definite boundaries."},
-  {f:"True Solution", b:"Dispersed phase at molecular level; cannot be seen by microscopy."},
-  {f:"Colloidal Dispersion", b:"Particle size 1–500 nm. Example: blood."},
-  {f:"Coarse Dispersion", b:"Particle size >500 nm (0.5 μm). Examples: emulsions, suspensions."},
-  {f:"Colligative Property", b:"Depends on the ratio of total solute to total solvent particles, not on solute identity."},
-  {f:"The 4 colligative properties", b:"Boiling point elevation, freezing point depression, vapor pressure lowering, osmotic pressure."},
-  {f:"Additive Property", b:"Sum of the contributions of atoms/constituents. Example: molecular weight."},
-  {f:"Constitutive Property", b:"Depends on arrangement & kind of atoms. Example: electric properties."},
-  {f:"Non‑Electrolytes", b:"Don't ionize, don't conduct current. Regular colligative effect. E.g. sucrose, glycerin, naphthalene."},
-  {f:"Electrolytes", b:"Ionize, conduct current, apparent (greater) colligative effect. E.g. HCl, NaCl."},
-  {f:"Strong Electrolytes", b:"Completely ionized. E.g. HCl, sodium sulfate."},
-  {f:"Weak Electrolytes", b:"Only partly ionized. E.g. ephedrine, phenobarbital."},
-  {f:"Molarity formula", b:"M = moles of solute / liter of solution."},
-  {f:"Normality formula", b:"N = gram‑equivalents of solute / liter of solution."},
-  {f:"Molality formula", b:"m = moles of solute / kg of solvent (temperature‑independent)."},
-  {f:"Mole fraction formula", b:"X₁ = n₁ / (n₁ + n₂)."},
-  {f:"% w/w", b:"Grams of solute per 100 g of solution."},
-  {f:"% v/v", b:"mL of solute per 100 mL of solution."},
-  {f:"% w/v", b:"Grams of solute per 100 mL of solution."},
-  {f:"Milligram percent", b:"mg of solute per 100 mL of solution."},
-  {f:"FeSO₄ example — Molarity", b:"41.50 g ÷ 151.9 g/mol = 0.2732 mol → 0.2732 M in 1 L."},
-  {f:"FeSO₄ example — Molality", b:"Solution mass 1037.5 g − 41.5 g solute = 996.0 g solvent → 0.2732/0.996 = 0.2743 m."},
-  {f:"FeSO₄ example — Mole fractions", b:"X(water) = 0.9951, X(FeSO₄) = 0.0049 (sum = 1.0000)."},
-  {f:"FeSO₄ example — % w/w", b:"41.50 / 1037.5 × 100 = 4.00%."}
+  {f:"Dispersion", b:"Consists of at least two phases: one or more dispersed (internal) phases in a single continuous (external) phase."},
+  {f:"Phase", b:"A distinct homogeneous part of a system, separated from other parts by definite boundaries."},
+  {f:"Phase — example", b:"A single tea leaf floating in water is one consolidated phase."},
+  {f:"True solution", b:"The two components are dispersed at the molecular level; the dispersed phase cannot be seen by microscopy."},
+  {f:"Colloidal dispersion — size", b:"Dispersed phase size range: 1–500 nm."},
+  {f:"Colloidal dispersion — example", b:"Blood is a common example of a colloidal dispersion."},
+  {f:"Coarse dispersion — size", b:"Particle size greater than 500 nm (0.5 μm)."},
+  {f:"Coarse dispersion — examples", b:"Emulsions and suspensions."},
+  {f:"Physical properties (3 classes)", b:"Colligative, additive, and constitutive."},
+  {f:"Colligative property", b:"Depends on the ratio of total number of solute particles to total number of solvent particles."},
+  {f:"Concentration units linked to colligative properties", b:"Molarity, normality, and molality."},
+  {f:"The 4 colligative properties", b:"Boiling point elevation, freezing point depression, lowering of vapor pressure, osmotic pressure."},
+  {f:"Boiling point elevation", b:"The solution's boiling point rises above that of the pure solvent."},
+  {f:"Freezing point depression", b:"The solution's freezing point drops below that of the pure solvent."},
+  {f:"Lowering of vapor pressure", b:"One of the four colligative properties; solute particles reduce solvent escaping tendency."},
+  {f:"Osmotic pressure", b:"Pressure needed to stop net solvent flow across a semipermeable membrane; a colligative property."},
+  {f:"Equal concentration rule", b:"Equal concentrations of different non‑electrolytes give approximately the same colligative effect, regardless of chemical nature."},
+  {f:"Additive property", b:"Depends on the total contribution of atoms in the molecule / sum of the properties of the constituents."},
+  {f:"Additive property — example", b:"Molecular weight (sum of the masses of the constituent atoms)."},
+  {f:"Constitutive property", b:"Depends on the arrangement and on the number and kind of atoms within a molecule."},
+  {f:"Constitutive property — example", b:"Electric properties."},
+  {f:"Non‑electrolyte", b:"A substance that does not ionize in water and does not conduct electric current."},
+  {f:"Non‑electrolyte examples", b:"Sucrose, glycerin, naphthalene."},
+  {f:"Non‑electrolyte colligative regularity", b:"A 0.1 M solution of any non‑electrolyte gives approximately the same colligative effect as any other, at equal concentration."},
+  {f:"Electrolyte", b:"A substance that forms ions in solution, conducts electric current, and shows apparent (greater) colligative properties."},
+  {f:"Electrolyte examples", b:"Hydrochloric acid, sodium chloride."},
+  {f:"Strong vs weak electrolyte", b:"Distinguished by whether the substance is completely or only partly ionized in water."},
+  {f:"Strong electrolyte examples", b:"Hydrochloric acid, sodium sulfate."},
+  {f:"Weak electrolyte examples", b:"Ephedrine, phenobarbital."},
+  {f:"Molarity", b:"Moles of solute contained in one liter of solution."},
+  {f:"Molarity formula", b:"M = moles of solute / liters of solution."},
+  {f:"Mole formula", b:"Mole = weight / molecular weight."},
+  {f:"Glucose example — data", b:"MW of glucose = 180 g/mol."},
+  {f:"Glucose example — result", b:"360 g glucose in 1 L solution = 2.00 M."},
+  {f:"Normality", b:"Number of gram (mole) equivalents of solute in one liter of solution."},
+  {f:"H2SO4 example — acid–base", b:"1 M H2SO4 = 2 N for acid–base reactions (2 mol H+ per mol)."},
+  {f:"H2SO4 example — sulfate", b:"1 M H2SO4 = 1 N for sulfate precipitation (1 mol sulfate per mol)."},
+  {f:"Molarity & Normality drawback", b:"Both change with temperature due to expansion/contraction of liquids."},
+  {f:"Molality", b:"Number of moles of solute per kilogram of solvent."},
+  {f:"Molality formula", b:"m = moles of solute / kg of solvent."},
+  {f:"Molality advantage", b:"Weight‑based, so it is not affected by temperature."},
+  {f:"Mole fraction", b:"Ratio of the moles of one constituent to the total moles of all constituents."},
+  {f:"Mole fraction formula (X1)", b:"X1 = n1 / (n1 + n2)."},
+  {f:"Mole fraction sum rule", b:"X1 + X2 = 1.0000."},
+  {f:"Mole percent", b:"Mole fraction × 100."},
+  {f:"Percent by weight (% w/w)", b:"Grams of solute per 100 g of solution."},
+  {f:"% w/w example", b:"10% w/w glycerin = 10 g glycerin dissolved in enough water (90 g) to make 100 g of solution."},
+  {f:"Percent by volume (% v/v)", b:"Milliliters of solute per 100 mL of solution."},
+  {f:"Percent weight‑in‑volume (% w/v)", b:"Grams of solute per 100 mL of solution."},
+  {f:"Milligram percent", b:"Milligrams of solute per 100 mL of solution."},
+  {f:"Table 5‑1 — Gas/Gas", b:"Example: Air."},
+  {f:"Table 5‑1 — Liquid/Gas", b:"Example: Water in oxygen."},
+  {f:"Table 5‑1 — Solid/Gas", b:"Example: Iodine vapor in air."},
+  {f:"Table 5‑1 — Gas/Liquid", b:"Example: Carbonated water."},
+  {f:"Table 5‑1 — Liquid/Liquid", b:"Example: Alcohol in water."},
+  {f:"Table 5‑1 — Solid/Liquid", b:"Example: Aqueous sodium chloride solution."},
+  {f:"Table 5‑1 — Gas/Solid", b:"Example: Hydrogen in palladium."},
+  {f:"Table 5‑1 — Liquid/Solid", b:"Example: Mineral oil in paraffin."},
+  {f:"Table 5‑1 — Solid/Solid", b:"Example: Gold–silver mixture, mixture of alums."}
 ];
+
+const flashDataMedium = [
+  {f:"Classify: sucrose in water", b:"Non‑electrolyte solution — sucrose does not ionize, so the solution won't conduct electricity."},
+  {f:"Classify: NaCl in water", b:"Electrolyte solution — NaCl ionizes into Na⁺ and Cl⁻, conducting current."},
+  {f:"Colloidal vs coarse visibility", b:"Coarse dispersion particles (>500 nm) can be resolved with an ordinary microscope; colloidal (1–500 nm) generally cannot."},
+  {f:"FP depression: non‑electrolyte vs electrolyte", b:"At equal molality, the electrolyte shows a larger freezing point depression — it produces more particles per formula unit upon ionization."},
+  {f:"Practice — Molarity", b:"9 g of a solute (MW 180) to 500 mL solution → (9/180)/0.5 = 0.10 M."},
+  {f:"Practice — Molarity #2", b:"29.25 g NaCl (MW 58.5) to 500 mL solution → 0.5 mol/0.5 L = 1.0 M."},
+  {f:"Practice — Molality", b:"18 g glucose (MW 180) in 500 g water → 0.1 mol/0.5 kg = 0.2 m."},
+  {f:"Practice — Mole fraction", b:"2 mol solute + 8 mol solvent → X(solute)=2/10=0.20; X(solvent)=0.80."},
+  {f:"Practice — % w/w", b:"15 g solute in 135 g solvent (150 g solution) → 15/150×100 = 10%."},
+  {f:"Practice — % w/v", b:"5 g solute to 250 mL solution → 5/250×100 = 2%."},
+  {f:"Practice — Normality (triprotic acid)", b:"0.5 M H3PO4, fully reacting as a triprotic acid → N = 0.5×3 = 1.5 N."},
+  {f:"Why molality is temperature‑independent", b:"It is defined by mass (kg of solvent); mass doesn't change with temperature, unlike volume."},
+  {f:"Why molarity changes with temperature", b:"Solution volume expands/contracts with temperature, changing moles‑per‑liter even though moles of solute stay constant."},
+  {f:"Particle‑size rule — 300 nm", b:"Classified as a colloidal dispersion (falls within 1–500 nm)."},
+  {f:"Particle‑size rule — 700 nm", b:"Classified as a coarse dispersion (>500 nm)."},
+  {f:"Property type: structure‑linked", b:"Constitutive — depends on atom arrangement/kind (like electric properties)."},
+  {f:"Property type: total atomic mass", b:"Additive — e.g., molecular weight."},
+  {f:"Property type: FP depression magnitude", b:"Colligative — depends on particle number ratio, not chemical identity."},
+  {f:"Classify: smoke in air", b:"Solid dispersed in a Gas (parallels Table 5‑1's Solid/Gas: iodine vapor in air)."},
+  {f:"Classify: fog", b:"Liquid dispersed in a Gas (parallels Liquid/Gas: water in oxygen)."},
+  {f:"Why HCl shows apparent colligative properties", b:"It ionizes in water, increasing the effective particle count beyond a non‑electrolyte at the same molar concentration."},
+  {f:"Strong vs weak — practical difference", b:"A strong electrolyte (HCl) is completely ionized, producing more ions per mole than a weak electrolyte (ephedrine), only partly ionized."},
+  {f:"Molarity vs molality choice", b:"For a temperature‑controlled colligative‑property study, use molality — it doesn't shift with volume changes."},
+  {f:"Deriving moles from grams", b:"Divide mass by molecular weight (mole = wt/M.wt)."},
+  {f:"Mole fraction check", b:"If X1 = 0.65, then X2 = 0.35, since X1 + X2 = 1."},
+  {f:"Normality vs molarity (general)", b:"N = M × number of reactive equivalents per mole, for the given reaction."},
+  {f:"Practice — grams for target molarity", b:"500 mL of 0.2 M glucose (MW 180): grams = 0.2×0.5×180 = 18 g."},
+  {f:"Practice — solvent mass from total", b:"Solution mass 500 g, solute 20 g → solvent mass = 480 g."},
+  {f:"Practice — moles of solvent (water)", b:"480 g water (MW≈18.02) ≈ 480/18.02 ≈ 26.6 mol."},
+  {f:"Practice — mole percent", b:"If X(solute)=0.02, mole percent of solute = 2%."},
+  {f:"Dilution effect: molarity vs molality", b:"Both fall on dilution, but only molarity is also sensitive to temperature‑driven volume changes; molality tracks mass ratios only."},
+  {f:"Classifying phenobarbital", b:"Weak electrolyte — only partly ionized in water."},
+  {f:"Classifying ephedrine", b:"Weak electrolyte — only partly ionized in water."},
+  {f:"Classifying sodium sulfate", b:"Strong electrolyte — completely ionized in water."},
+  {f:"Visibility comparison across dispersions", b:"True solution: invisible even by microscopy; colloidal: generally unresolved optically; coarse: visible under a microscope."},
+  {f:"Multi‑fact check — glycerin", b:"Glycerin is a non‑electrolyte; its 10% w/w solution contains 10 g glycerin in 100 g of solution."},
+  {f:"Dispersion example recap", b:"A tea leaf floating in water represents one consolidated phase within a larger system."},
+  {f:"Predicting colligative comparison — 2 non‑electrolytes", b:"Equal molal glucose and sucrose solutions should show approximately equal freezing point depression."},
+  {f:"Predicting colligative comparison — electrolyte vs non‑electrolyte", b:"Equal molal NaCl and glucose will NOT match — NaCl (an electrolyte) shows a larger depression."},
+  {f:"Why % w/w ≠ % w/v generally", b:"%w/w uses total solution mass; %w/v uses solution volume — equal only near solution density = 1 g/mL."},
+  {f:"Table 5‑2 symbol note", b:"'X, N' in the table denotes mole fraction — a different meaning from normality's symbol 'N' elsewhere."},
+  {f:"Osmotic pressure application", b:"Two non‑electrolyte solutions of equal molar concentration require approximately the same pressure to stop solvent flow."},
+  {f:"Vapor pressure lowering — mechanism", b:"A non‑volatile solute occupies surface area, reducing the fraction of solvent molecules that can escape."},
+  {f:"Constitutive recognition — isomer change", b:"If a property changes upon rearranging atoms into an isomer (same formula), it is constitutive, not additive."},
+  {f:"Additive recognition — sum regardless of arrangement", b:"If a property is simply the sum of atomic contributions regardless of arrangement, it is additive."},
+  {f:"Temperature‑stability need", b:"A pharmacist studying properties across storage temperatures should express concentration in molality, not molarity."},
+  {f:"Practice — normality for divalent base", b:"0.4 M Ca(OH)2, 2 reactive OH⁻ per mole → N = 0.4×2 = 0.8 N."},
+  {f:"Practice — mole fraction, unequal moles", b:"0.3 mol solute + 2.7 mol solvent → X(solute) = 0.3/3.0 = 0.10."},
+  {f:"Practice — deriving MW from molarity data", b:"4.5 g solute in 250 mL solution gives 0.2 M → MW = 4.5/(0.2×0.25) = 90 g/mol."},
+  {f:"%w/v vs %w/w with numbers", b:"10 g solute in 100 mL solution = 10% w/v; the same 10 g in a 100 g total solution = 10% w/w — they coincide only near density ≈ 1 g/mL."}
+];
+
+const flashDataHard = [
+  {f:"Multi‑step (MgSO4) — Molarity", b:"24 g MgSO4 (MW 120) to 500 mL solution → 0.2 mol / 0.5 L = 0.40 M."},
+  {f:"Multi‑step (MgSO4) — Molality", b:"Solution mass = 500×1.05 = 525 g; solvent = 525−24 = 501 g → m = 0.2/0.501 ≈ 0.399 m."},
+  {f:"Multi‑step (MgSO4) — Mole fraction", b:"Moles water = 501/18.02 ≈ 27.80 → X(MgSO4) = 0.2/(27.80+0.2) ≈ 0.0071; X(water) ≈ 0.9929."},
+  {f:"Multi‑step (MgSO4) — Mole percent", b:"Mole % MgSO4 ≈ 0.71%; mole % water ≈ 99.29%."},
+  {f:"Multi‑step (MgSO4) — % w/w", b:"% w/w = 24/525 × 100 ≈ 4.57%."},
+  {f:"Reverse calc — target molality", b:"0.5 m glucose (MW 180) in 1 kg water: grams needed = 0.5×1×180 = 90 g."},
+  {f:"Reverse calc — target normality", b:"1 L of 0.6 N H2SO4 (acid, 2 eq/mol, MW 98): grams = 0.6/2×98 = 29.4 g."},
+  {f:"Apparent vs regular colligative effect", b:"'Apparent' (electrolytes) arises because ionization raises the effective particle count above moles dissolved; 'regular' (non‑electrolytes) reflects a 1:1 particle‑to‑mole ratio."},
+  {f:"Diagnostic — FP depression ~2×", b:"A ~2× larger‑than‑predicted non‑electrolyte depression suggests the solute dissociates into about two particles per formula unit."},
+  {f:"Diagnostic — weak electrolyte position", b:"A weak electrolyte's colligative effect sits between a non‑electrolyte and a strong electrolyte at the same molality, since only some molecules ionize."},
+  {f:"Why M/N fail across temperatures", b:"Their volume term is temperature‑sensitive (liquids expand/contract), so a fixed solute mass shows different M/N at different temperatures."},
+  {f:"Molality's invariance — reasoning", b:"Defined per kilogram of solvent (mass, not volume), so heating/cooling doesn't change it — ideal for temperature‑dependent colligative studies."},
+  {f:"Multi‑concept — sodium sulfate", b:"A strong electrolyte; 0.1 m sodium sulfate should show a considerably larger FP depression than 0.1 m sucrose, since it dissociates into three ions."},
+  {f:"Property‑type justification", b:"MW is additive (sum of atomic masses); conductivity tied to ionic arrangement is constitutive (depends on structure, not mere sum)."},
+  {f:"Deriving unknown MW", b:"30 g non‑electrolyte in 500 mL solution gives 0.25 M → MW = 30/(0.25×0.5) = 240 g/mol."},
+  {f:"Chained calc — solvent mass", b:"250 mL, density 1.20 g/mL, 20 g solute: solution mass = 300 g → solvent mass = 280 g."},
+  {f:"Chained calc — molality", b:"Solute MW 100: moles = 20/100 = 0.2 mol → molality = 0.2/0.280 kg ≈ 0.714 m."},
+  {f:"Chained calc — mole fraction", b:"Moles water = 280/18.02 ≈ 15.54 → X(solute) = 0.2/(15.54+0.2) ≈ 0.0127."},
+  {f:"Table 5‑1 synthesis", b:"Gold‑silver alloy (Solid‑in‑Solid) and mineral oil in paraffin (Liquid‑in‑Solid) share a solid continuous phase, differing only in the dispersed component's original state."},
+  {f:"Why 'regular' behavior needs non‑electrolytes", b:"Colligative properties count particles; only non‑electrolytes keep a 1:1 ratio of formula units to particles — electrolytes break this via ionization."},
+  {f:"Same acid, two normalities", b:"1 M H2SO4 = 2 N for acid–base neutralization (2 mol H+/mol) but 1 N for a reaction consuming only sulfate — normality depends on reaction context."},
+  {f:"Hard % reasoning", b:"10% w/v equals 10% w/w only when density = exactly 1.00 g/mL, since %w/v divides by volume and %w/w divides by mass."},
+  {f:"Hard classification reasoning", b:"Any measurable ionization/conduction — however small — makes a substance a weak electrolyte, not a non‑electrolyte."},
+  {f:"Reverse molarity‑to‑mass", b:"250 mL of 0.4 M solute (MW 68): mass = 0.4×0.25×68 = 6.8 g."},
+  {f:"Full‑chain — % w/w from M & density", b:"0.4 M (MW 68), density 1.05, in 1 L: solute mass = 27.2 g; solution mass = 1050 g → %w/w ≈ 2.59%."},
+  {f:"Full‑chain — molality from same data", b:"Solvent mass = 1050−27.2 = 1022.8 g → molality = 0.4/1.0228 ≈ 0.391 m."},
+  {f:"Full‑chain — mole fraction from same data", b:"Moles water = 1022.8/18.02 ≈ 56.76 → X(solute) = 0.4/(56.76+0.4) ≈ 0.0070."},
+  {f:"Additive property under mixing", b:"A mixture's average MW is still additive — it's a weighted sum of each component's atomic contributions."},
+  {f:"Constitutive counter‑example", b:"Isomers share identical MW (additive) yet can differ sharply in constitutive properties (e.g., electrical/optical behavior) due to atomic arrangement."},
+  {f:"Diagnostic — weak electrolyte, small excess depression", b:"An FP depression only slightly larger than the non‑electrolyte prediction points to a weak electrolyte, partially dissociating."},
+  {f:"Boundary case — 500 nm", b:"Per the lecture's cutoff, exactly 500 nm still falls within the colloidal range (1–500 nm); only sizes greater than 500 nm are coarse."},
+  {f:"Combining property classes — glucose", b:"Glucose's MW (180) is additive; its solution colligative behavior is colligative; any arrangement‑dependent property (e.g., optical rotation) is constitutive — all three classes can apply to one compound."},
+  {f:"Integrative calculation order", b:"From mass, volume, density, MW: moles→molarity; solution mass→solvent mass→molality; solvent moles→mole fractions/percent; then %w/w — mirroring the FeSO4 method."},
+  {f:"Why % v/v isn't computable for FeSO4", b:"%v/v needs the solute's own volume, but only solute mass was given — so %v/v cannot be found from that data set."},
+  {f:"'Exsiccated' significance", b:"Indicates dried (anhydrous) ferrous sulfate, which determines that MW 151.9 (the anhydrous MW) applies to the mole calculations."},
+  {f:"Sensitivity analysis — heating a fixed solution", b:"Raising temperature (mass composition fixed) slightly lowers molarity (volume expands), while molality and mole fraction stay unchanged (mass‑based)."},
+  {f:"Comparing worked vs practice examples", b:"The FeSO4 example and a parallel MgSO4 practice problem follow identical sequential logic despite different numeric inputs."},
+  {f:"Deriving equivalents from valence", b:"For AlCl3 in a reaction consuming all three chloride ions per formula unit, 1 M AlCl3 = 3 N for that reaction."},
+  {f:"Apparent effect converging to regular", b:"As a weak electrolyte's degree of ionization approaches zero, its apparent colligative behavior approaches that of a non‑electrolyte at the same concentration."},
+  {f:"Unit choice for formulation across temperatures", b:"Because storage/use spans a temperature range, concentration should be expressed in molality (mass‑based), not molarity, to keep the labeled value accurate."}
+];
+
+const flashSets = { easy: flashDataEasy, medium: flashDataMedium, hard: flashDataHard };
+let currentFlashLevel = 'easy';
+let flashData = flashSets[currentFlashLevel].slice();
 const flashGrid = document.getElementById('flashGrid');
 function renderFlash(){
   flashGrid.innerHTML = '';
-  document.getElementById('flashCount').textContent = flashData.length + ' cards';
+  const levelLabel = currentFlashLevel.charAt(0).toUpperCase() + currentFlashLevel.slice(1);
+  document.getElementById('flashCount').textContent = flashData.length + ' cards · ' + levelLabel;
   flashData.forEach(item=>{
     const card = document.createElement('div');
     card.className = 'flash-card';
@@ -716,51 +861,179 @@ document.getElementById('shuffleFlash').addEventListener('click',()=>{
   }
   renderFlash();
 });
+document.querySelectorAll('#flashLevelRow .filter-chip').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#flashLevelRow .filter-chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFlashLevel = btn.dataset.level;
+    flashData = flashSets[currentFlashLevel].slice();
+    renderFlash();
+  });
+});
 renderFlash();
 
-/* ---------------- Section 5: quiz bank ---------------- */
-const quizBank = [
+/* ---------------- Section 5: quiz bank (3 difficulty levels) ---------------- */
+const quizBankEasy = [
   {q:"What is defined as \"a bounded space or an exact quantity of a material substance\"?", choices:["Phase","System","Dispersion","Solution"], a:1},
-  {q:"A dispersion consists of at least two phases: a dispersed phase contained within a ______ phase.", choices:["reactive","colloidal","continuous","crystalline"], a:2},
-  {q:"Which term means \"a distinct homogeneous part of a system separated by definite boundaries\"?", choices:["System","Dispersion","Phase","Solute"], a:2},
+  {q:"A dispersion consists of at least how many phases?", choices:["1","2","3","4"], a:1},
+  {q:"Which term means \"a distinct homogeneous part of a system separated by definite boundaries\"?", choices:["System","Phase","Dispersion","Solute"], a:1},
+  {q:"A single tea leaf floating in water is used in the lecture as an example of:", choices:["A dispersion","A single consolidated phase","A colloidal dispersion","A coarse dispersion"], a:1},
   {q:"In a true solution, the dispersed phase is dispersed at what level?", choices:["Colloidal level","Molecular level","Coarse level","Visible level"], a:1},
+  {q:"Can the dispersed phase of a true solution be visualized using microscopy?", choices:["Yes, always","No","Only with an electron microscope","Only if colored"], a:1},
   {q:"The particle size range for a colloidal dispersion is:", choices:["<1 nm","1–500 nm","500–1000 nm",">500 nm"], a:1},
-  {q:"Blood is a common example of which type of dispersion?", choices:["True solution","Coarse dispersion","Colloidal dispersion","Suspension only"], a:2},
+  {q:"Blood is given in the lecture as a common example of:", choices:["True solution","Coarse dispersion","Colloidal dispersion","Suspension only"], a:2},
   {q:"A dispersion is classified as \"coarse\" when particle size is greater than:", choices:["500 nm (0.5 μm)","50 nm","1 nm","5 μm"], a:0},
-  {q:"Which are examples of coarse dispersions?", choices:["Solutions and colloids","Emulsions and suspensions","Blood and air","Gold–silver alloys"], a:1},
+  {q:"Which two are given as examples of coarse dispersions?", choices:["Solutions and colloids","Emulsions and suspensions","Blood and air","Gold–silver alloys"], a:1},
+  {q:"Physical properties of substances are classified into three categories:", choices:["Physical, chemical, biological","Colligative, additive, constitutive","Acidic, basic, neutral","Solid, liquid, gas"], a:1},
   {q:"A colligative property depends on:", choices:["The chemical nature of the solute","The ratio of total solute particles to total solvent particles","The molecular weight only","The color of the solution"], a:1},
+  {q:"Colligative properties are linked to which concentration expressions in the lecture?", choices:["Density, viscosity, refractive index","Molarity, normality, molality","pH, pKa, pOH","Surface tension only"], a:1},
   {q:"Which of the following is NOT one of the four colligative properties?", choices:["Boiling point elevation","Freezing point depression","Viscosity increase","Osmotic pressure"], a:2},
   {q:"The four colligative properties are boiling point elevation, freezing point depression, lowering of vapor pressure, and:", choices:["Surface tension","Osmotic pressure","Refractive index","Density"], a:1},
+  {q:"As solute is added, a solution's boiling point compared with the pure solvent:", choices:["Decreases","Increases","Stays the same","Becomes undefined"], a:1},
+  {q:"As solute is added, a solution's freezing point compared with the pure solvent:", choices:["Increases","Decreases","Stays the same","Becomes undefined"], a:1},
+  {q:"Dissolved solute particles have what effect on vapor pressure?", choices:["They raise it","They lower it","No effect","They double it"], a:1},
+  {q:"Osmotic pressure is the pressure required to:", choices:["Increase solvent flow across a membrane","Stop net solvent flow across a semipermeable membrane","Boil the solution","Freeze the solution"], a:1},
   {q:"For equal concentrations of different non‑electrolytes, colligative property values are:", choices:["Always different","Approximately the same","Unrelated","Dependent on color"], a:1},
+  {q:"Additive properties depend on:", choices:["The arrangement of atoms","The total contribution/sum of the constituents' properties","Only electrical charge","Temperature alone"], a:1},
   {q:"Molecular weight (sum of masses of constituent atoms) is an example of a(n):", choices:["Colligative property","Additive property","Constitutive property","Electrolytic property"], a:1},
-  {q:"Electric properties, which depend on the arrangement and kind of atoms, are examples of:", choices:["Additive properties","Colligative properties","Constitutive properties","Concentration properties"], a:2},
+  {q:"Constitutive properties depend on:", choices:["The sum of atomic masses","The arrangement and kind/number of atoms in a molecule","Concentration only","Temperature only"], a:1},
+  {q:"Electric properties are given in the lecture as an example of a:", choices:["Additive property","Colligative property","Constitutive property","Concentration property"], a:2},
   {q:"Which of these is a non‑electrolyte?", choices:["Sodium chloride","Hydrochloric acid","Sucrose","Sodium sulfate"], a:2},
+  {q:"Which are all given as examples of non‑electrolytes?", choices:["Sucrose, glycerin, naphthalene","HCl, NaCl, H2SO4","Ephedrine, phenobarbital, HCl","Sodium sulfate, sucrose, HCl"], a:0},
   {q:"Non‑electrolytes, when dissolved in water:", choices:["Ionize completely","Do not ionize and do not conduct current","Ionize partly","Always precipitate"], a:1},
+  {q:"Electrolytes are substances that, in solution:", choices:["Do not ionize","Form ions and conduct electric current","Only dissolve physically","Never affect colligative properties"], a:1},
   {q:"Versus non‑electrolytes of the same concentration, electrolytes produce:", choices:["Smaller freezing point depression","Greater freezing point depression and boiling point elevation","No colligative effect","Identical effects"], a:1},
-  {q:"Which pair are both strong electrolytes in the lecture?", choices:["Ephedrine and phenobarbital","Hydrochloric acid and sodium sulfate","Sucrose and glycerin","Naphthalene and glycerin"], a:1},
+  {q:"Which pair are both strong electrolytes according to the lecture?", choices:["Ephedrine and phenobarbital","Hydrochloric acid and sodium sulfate","Sucrose and glycerin","Naphthalene and glycerin"], a:1},
   {q:"Ephedrine and phenobarbital are examples of:", choices:["Strong electrolytes","Weak electrolytes","Non‑electrolytes","Colloids"], a:1},
   {q:"Strong vs. weak electrolytes are distinguished by:", choices:["Molecular weight","Whether they are completely or only partly ionized in water","Color change","Solubility in oil"], a:1},
   {q:"Molarity is defined as:", choices:["Moles of solute per kg of solvent","Moles of solute per liter of solution","Equivalents of solute per liter of solution","Grams of solute per 100 mL of solution"], a:1},
+  {q:"The formula for calculating moles from mass is:", choices:["Mole = wt × M.wt","Mole = wt / M.wt","Mole = M.wt / wt","Mole = wt + M.wt"], a:1},
+  {q:"In the glucose example, the molecular weight of glucose is:", choices:["90 g/mol","120 g/mol","180 g/mol","360 g/mol"], a:2},
+  {q:"Dissolving 360 g of glucose (MW 180) to make 1 L of solution gives a concentration of:", choices:["1.00 M","2.00 M","3.60 M","0.50 M"], a:1},
   {q:"Normality is defined as:", choices:["Moles of solute per liter of solution","Gram equivalents of solute per liter of solution","Moles of solute per kg solvent","Mole fraction ×100"], a:1},
-  {q:"Molality is defined as:", choices:["Moles of solute per liter of solution","Moles of solute per 1000 g (1 kg) of solvent","Grams of solute per 100 g solution","mL solute per 100 mL solution"], a:1},
-  {q:"Which concentration units change value with temperature?", choices:["Molality and mole fraction","Molarity and Normality","Percent w/w only","None of these"], a:1},
-  {q:"Molality is preferred for studying solutions at various temperatures because:", choices:["It is expressed in weight units and is temperature‑independent","It is more accurate at high concentration","It requires less solute","It is always higher than molarity"], a:0},
   {q:"1 M sulfuric acid (H₂SO₄) equals how many Normal for acid–base reactions?", choices:["0.5 N","1 N","2 N","4 N"], a:2},
+  {q:"1 M sulfuric acid (H₂SO₄) equals how many Normal for sulfate precipitation reactions?", choices:["0.5 N","1 N","2 N","4 N"], a:1},
+  {q:"Which concentration units change value with temperature?", choices:["Molality and mole fraction","Molarity and Normality","Percent w/w only","None of these"], a:1},
+  {q:"Why do molarity and normality change with temperature?", choices:["Because moles of solute change","Because of expansion/contraction of liquids (volume)","Because solvent evaporates","Because of density of the solute alone"], a:1},
+  {q:"Molality is defined as:", choices:["Moles of solute per liter of solution","Moles of solute per 1000 g (1 kg) of solvent","Grams of solute per 100 g solution","mL solute per 100 mL solution"], a:1},
+  {q:"The formula for molality is:", choices:["m = moles solute / L solution","m = moles solute / kg solvent","m = g solute / g solution","m = n₁/(n₁+n₂)"], a:1},
+  {q:"Molality is preferred for studying solutions at various temperatures because:", choices:["It is expressed in weight units and is temperature‑independent","It is more accurate at high concentration","It requires less solute","It is always higher than molarity"], a:0},
   {q:"Mole fraction of constituent 1 (X₁) is calculated as:", choices:["n₁/(n₁+n₂)","n₁ × n₂","n₁/V","(n₁+n₂)/n₁"], a:0},
+  {q:"If X₁ + X₂ = 1.0000, and X₁ = 0.60, what is X₂?", choices:["0.20","0.40","0.60","1.60"], a:1},
+  {q:"Mole percent is obtained by:", choices:["Multiplying mole fraction by 100","Dividing mole fraction by 100","Adding 100 to mole fraction","Subtracting mole fraction from 100"], a:0},
+  {q:"Percent by weight (% w/w) signifies:", choices:["mL solute per 100 mL solution","Grams of solute per 100 g of solution","Grams of solute per 100 mL of solution","mg solute per 100 mL solution"], a:1},
   {q:"A 10% w/w solution of glycerin means:", choices:["10 mL glycerin per 100 mL solution","10 g glycerin dissolved to make 100 g of solution","10 g glycerin per 100 mL solution","10 mg glycerin per 100 mL solution"], a:1},
   {q:"Percentage by volume (% v/v) expresses:", choices:["g solute/100 g solution","mL solute/100 mL solution","g solute/100 mL solution","mg solute/100 mL solution"], a:1},
   {q:"Percentage weight‑in‑volume (% w/v) expresses:", choices:["g solute per 100 mL solution","mL solute per 100 mL solution","g solute per 100 g solution","moles per liter"], a:0},
-  {q:"In the FeSO₄ example, moles of FeSO₄ = 41.50 g ÷ 151.9 g/mol =", choices:["0.1732 mol","0.2732 mol","2.732 mol","27.32 mol"], a:1},
-  {q:"The calculated molarity of the FeSO₄ solution was:", choices:["0.1732 M","0.2732 M","0.4150 M","1.519 M"], a:1},
-  {q:"The molality of the FeSO₄ solution (0.2732 mol / 0.996 kg) was:", choices:["0.2732 m","0.2743 m","0.4150 m","1.0375 m"], a:1},
-  {q:"Mass of solvent (water) in the FeSO₄ example: 1037.5 g − 41.5 g =", choices:["995.0 g","996.0 g","1000 g","1037.5 g"], a:1},
-  {q:"The mole fraction of water in the FeSO₄ solution was approximately:", choices:["0.0049","0.4951","0.9951","1.0000"], a:2},
-  {q:"The percentage by weight of FeSO₄ in the solution was:", choices:["0.49%","4.00%","40.0%","41.5%"], a:1},
+  {q:"Milligram percent expresses:", choices:["mg solute per 100 mL solution","mg solute per 100 g solution","g solute per 100 mg solution","mg solute per liter"], a:0},
+  {q:"According to Table 5‑1, a Gas solute in a Gas solvent is exemplified by:", choices:["Air","Carbonated water","Water in oxygen","Iodine vapor in air"], a:0},
+  {q:"According to Table 5‑1, a Liquid solute in a Gas solvent is exemplified by:", choices:["Alcohol in water","Water in oxygen","Carbonated water","Mineral oil in paraffin"], a:1},
+  {q:"\"Iodine vapor in air\" represents which solute–solvent combination in Table 5‑1?", choices:["Gas in Gas","Solid in Gas","Liquid in Gas","Solid in Solid"], a:1},
+  {q:"According to Table 5‑1, a Gas solute in a Liquid solvent is exemplified by:", choices:["Carbonated water","Alcohol in water","Air","Hydrogen in palladium"], a:0},
   {q:"Which of the following is a Solid‑in‑Liquid solution example from Table 5‑1?", choices:["Carbonated water","Alcohol in water","Aqueous sodium chloride solution","Iodine vapor in air"], a:2},
   {q:"\"Hydrogen in palladium\" is an example of which solute–solvent combination?", choices:["Gas in Gas","Gas in Solid","Solid in Gas","Liquid in Solid"], a:1},
+  {q:"\"Mineral oil in paraffin\" represents which combination in Table 5‑1?", choices:["Liquid in Solid","Solid in Liquid","Gas in Solid","Solid in Solid"], a:0},
   {q:"How many types of homogeneous solute–solvent combinations are possible, given 3 states of matter?", choices:["3","6","9","12"], a:2}
 ];
 
+const quizBankMedium = [
+  {q:"A solute has MW 180. Dissolving 9 g of it to make 500 mL of solution gives a molarity of:", choices:["0.05 M","0.10 M","0.20 M","0.45 M"], a:1},
+  {q:"29.25 g of NaCl (MW 58.5) dissolved to make 500 mL of solution gives a molarity of:", choices:["0.5 M","1.0 M","2.0 M","0.25 M"], a:1},
+  {q:"18 g of glucose (MW 180) dissolved in 500 g of water gives a molality of:", choices:["0.1 m","0.2 m","0.4 m","2.0 m"], a:1},
+  {q:"A mixture has 2 mol solute and 8 mol solvent. The mole fraction of the solute is:", choices:["0.10","0.20","0.25","0.80"], a:1},
+  {q:"15 g of solute dissolved in 135 g of solvent (150 g total solution) gives a percent by weight of:", choices:["5%","10%","15%","11.1%"], a:1},
+  {q:"5 g of solute dissolved to make 250 mL of solution gives a % w/v of:", choices:["1%","2%","5%","20%"], a:1},
+  {q:"For 0.5 M H3PO4 acting as a fully‑reacting triprotic acid, the normality is:", choices:["0.5 N","1.0 N","1.5 N","3.0 N"], a:2},
+  {q:"A dispersed phase measuring 300 nm should be classified as:", choices:["A true solution","A colloidal dispersion","A coarse dispersion","None of these"], a:1},
+  {q:"A dispersed phase measuring 700 nm should be classified as:", choices:["A true solution","A colloidal dispersion","A coarse dispersion","An electrolyte"], a:2},
+  {q:"A solution of sucrose in water is best classified as:", choices:["An electrolyte solution","A non‑electrolyte solution","A strong electrolyte solution","A weak electrolyte solution"], a:1},
+  {q:"A solution of NaCl in water is best classified as:", choices:["A non‑electrolyte solution","An electrolyte solution","Neither electrolyte nor non‑electrolyte","A colloidal dispersion only"], a:1},
+  {q:"Why does HCl show a greater freezing point depression than a non‑electrolyte of the same molal concentration?", choices:["HCl has a higher molecular weight","HCl ionizes, increasing the effective particle count","HCl lowers vapor pressure less","HCl does not dissolve fully"], a:1},
+  {q:"Which unit should be used to accurately compare colligative properties across a range of storage temperatures?", choices:["Molarity","Normality","Molality","Percent by volume"], a:2},
+  {q:"Why is molality unaffected by temperature changes?", choices:["Because it uses solution volume","Because it is based on mass (kg of solvent), which doesn't change with temperature","Because it ignores the solute entirely","Because it only applies to gases"], a:1},
+  {q:"Why does molarity change with temperature even if no solute is added or removed?", choices:["Because moles of solute change with heat","Because the volume of the solution expands or contracts with temperature","Because normality always equals molarity","Because solute mass evaporates"], a:1},
+  {q:"If X₁ = 0.65 for a two‑component solution, what is X₂?", choices:["0.65","0.35","1.65","0.15"], a:1},
+  {q:"To prepare 500 mL of a 0.2 M glucose (MW 180) solution, the mass of glucose needed is:", choices:["9 g","18 g","36 g","90 g"], a:1},
+  {q:"A solution has a total mass of 500 g and contains 20 g of solute. The solvent mass is:", choices:["500 g","480 g","20 g","460 g"], a:1},
+  {q:"480 g of water (MW ≈ 18.02 g/mol) corresponds to approximately how many moles?", choices:["8.9 mol","18.0 mol","26.6 mol","48.0 mol"], a:2},
+  {q:"If the mole fraction of a solute is 0.02, its mole percent is:", choices:["0.02%","0.20%","2%","20%"], a:2},
+  {q:"Phenobarbital is classified in the lecture as a:", choices:["Strong electrolyte","Weak electrolyte","Non‑electrolyte","Colloid"], a:1},
+  {q:"Ephedrine is classified in the lecture as a:", choices:["Non‑electrolyte","Strong electrolyte","Weak electrolyte","Coarse dispersion"], a:2},
+  {q:"Sodium sulfate is classified in the lecture as a:", choices:["Weak electrolyte","Non‑electrolyte","Strong electrolyte","Colloidal dispersion"], a:2},
+  {q:"Equal molal solutions of glucose and sucrose (both non‑electrolytes) should show:", choices:["Very different freezing point depressions","Approximately equal freezing point depression","No freezing point depression at all","Only glucose shows depression"], a:1},
+  {q:"Equal molal solutions of NaCl and glucose should show:", choices:["Identical freezing point depression","NaCl showing a larger depression than glucose","Glucose showing a larger depression than NaCl","No measurable difference"], a:1},
+  {q:"Why does % w/w not generally equal % w/v for the same solution?", choices:["They always are equal","%w/w uses solution mass, %w/v uses solution volume — they coincide only near density = 1 g/mL","%w/v is always double %w/w","They apply to different solutes"], a:1},
+  {q:"In Table 5‑2, the symbol pairing \"X, N\" refers to:", choices:["Normality","Molality","Mole fraction","Milligram percent"], a:2},
+  {q:"Since osmotic pressure is a colligative property, two non‑electrolyte solutions of equal molar concentration should require:", choices:["Very different pressures to stop solvent flow","Approximately the same pressure to stop solvent flow","No pressure at all","Pressure proportional to molecular weight"], a:1},
+  {q:"Adding a non‑volatile solute to a solvent lowers vapor pressure because:", choices:["Solute particles increase solvent's escaping tendency","Solute particles occupy surface area, reducing solvent molecules that can escape","The solvent freezes instantly","Vapor pressure is unrelated to solute particles"], a:1},
+  {q:"A property that changes when atoms are rearranged into an isomer (same formula, different structure) but total atoms stay the same is:", choices:["Additive","Colligative","Constitutive","Concentration‑dependent"], a:2},
+  {q:"A property that is simply the sum of atomic contributions regardless of arrangement is:", choices:["Constitutive","Colligative","Additive","Electrolytic"], a:2},
+  {q:"A pharmacist studying a solution's properties across storage temperatures should prefer to express concentration as:", choices:["Molarity","Molality","Percent by volume","Normality only"], a:1},
+  {q:"0.4 M Ca(OH)2 acting as a base with 2 reactive OH⁻ per mole has a normality of:", choices:["0.2 N","0.4 N","0.8 N","1.6 N"], a:2},
+  {q:"A mixture of 0.3 mol solute and 2.7 mol solvent has a solute mole fraction of:", choices:["0.03","0.10","0.30","0.90"], a:1},
+  {q:"If 4.5 g of a solute dissolved in 250 mL of solution gives 0.2 M, the molecular weight of the solute is:", choices:["45 g/mol","90 g/mol","180 g/mol","22.5 g/mol"], a:1},
+  {q:"10 g of solute in 100 mL of solution is what percentage expression?", choices:["10% w/w","10% w/v","10% v/v","1% w/v"], a:1},
+  {q:"The same 10 g of solute, if the total solution mass is 100 g, is what percentage expression?", choices:["10% w/v","10% v/v","10% w/w","100% w/w"], a:2},
+  {q:"A dispersion whose particles cannot be resolved by ordinary light microscopy, but which is not a true solution, is most likely:", choices:["A coarse dispersion","A colloidal dispersion","An electrolyte solution","A gas‑in‑gas solution"], a:1},
+  {q:"Smoke (fine solid particles suspended in air) is analogous to which Table 5‑1 category?", choices:["Gas in Gas","Solid in Gas","Liquid in Gas","Solid in Solid"], a:1},
+  {q:"Fog (liquid droplets suspended in air) is analogous to which Table 5‑1 category?", choices:["Liquid in Gas","Gas in Liquid","Solid in Gas","Gas in Gas"], a:0},
+  {q:"A weak electrolyte's colligative effect at a given molal concentration, compared to a non‑electrolyte and a strong electrolyte at the same concentration, is:", choices:["Equal to the non‑electrolyte","Equal to the strong electrolyte","Between the non‑electrolyte and the strong electrolyte","Always zero"], a:2},
+  {q:"Normality generally relates to molarity by:", choices:["N = M always, regardless of reaction","N = M × number of reactive equivalents per mole for the given reaction","N is always half of M","N and M are unrelated"], a:1},
+  {q:"Diluting a solution with more solvent affects molality by:", choices:["Increasing it","Decreasing it","Leaving it completely unaffected by any change","Doubling it exactly"], a:1},
+  {q:"Which of the following pairs are BOTH non‑electrolytes?", choices:["HCl and sucrose","Glycerin and naphthalene","NaCl and glycerin","Sodium sulfate and sucrose"], a:1},
+  {q:"The formula mole = wt / M.wt is used to calculate:", choices:["Normality directly","Moles of solute from its mass and molecular weight","Density of a solution","Percent by volume"], a:1},
+  {q:"If a solution's temperature increases while its solute and solvent masses stay fixed, its molarity will most likely:", choices:["Increase","Decrease slightly (due to volume expansion)","Stay exactly the same","Become undefined"], a:1},
+  {q:"Under the same temperature‑increase scenario, molality will:", choices:["Increase","Decrease","Remain unchanged, since it is mass‑based","Become undefined"], a:2},
+  {q:"A 0.1 m solution of sodium sulfate (a strong electrolyte) compared to a 0.1 m solution of sucrose (a non‑electrolyte) should show:", choices:["Equal freezing point depression","A smaller freezing point depression for sodium sulfate","A larger freezing point depression for sodium sulfate","No depression for either"], a:2},
+  {q:"Mole percent of water in a solution where X(water) = 0.97 is:", choices:["0.97%","9.7%","97%","3%"], a:2},
+  {q:"A solute contributing exactly to the sum of the solution's atomic masses reflects which property type?", choices:["Constitutive","Colligative","Additive","Apparent"], a:2}
+];
+
+const quizBankHard = [
+  {q:"24 g of MgSO4 (MW 120) dissolved to make 500 mL of solution has a molarity of:", choices:["0.10 M","0.20 M","0.40 M","0.48 M"], a:2},
+  {q:"For the same MgSO4 solution (density 1.05, 500 mL), the solution mass is:", choices:["500 g","505 g","525 g","550 g"], a:2},
+  {q:"Continuing the MgSO4 example, the solvent (water) mass is:", choices:["476 g","501 g","525 g","524 g"], a:1},
+  {q:"Continuing the MgSO4 example, the molality is approximately:", choices:["0.20 m","0.399 m","0.40 m","0.48 m"], a:1},
+  {q:"Continuing the MgSO4 example, moles of water (MW≈18.02) are approximately:", choices:["15.5 mol","27.8 mol","55.3 mol","96.0 mol"], a:1},
+  {q:"Continuing the MgSO4 example, the mole fraction of MgSO4 is approximately:", choices:["0.0049","0.0071","0.0400","0.2000"], a:1},
+  {q:"Continuing the MgSO4 example, the percentage by weight of MgSO4 is approximately:", choices:["4.00%","4.57%","4.80%","0.48%"], a:1},
+  {q:"To prepare a 0.5 m glucose (MW 180) solution using exactly 1 kg of water, the mass of glucose required is:", choices:["45 g","90 g","180 g","360 g"], a:1},
+  {q:"To make 1 L of 0.6 N H2SO4 (as an acid, 2 equivalents/mol, MW 98), the mass of H2SO4 required is:", choices:["14.7 g","29.4 g","58.8 g","98.0 g"], a:1},
+  {q:"An \"apparent\" colligative effect (seen with electrolytes) arises because:", choices:["The solute has an unusually high molecular weight","Ionization increases the effective particle count beyond the moles dissolved","The solvent evaporates faster","Additive properties dominate"], a:1},
+  {q:"A solution shows a freezing point depression roughly twice that predicted assuming non‑electrolyte behavior at the same molality. This most likely indicates:", choices:["The solute is a non‑electrolyte","The solute dissociates into about two particles per formula unit","The solute has twice the expected molecular weight","A calculation error only"], a:1},
+  {q:"A weak electrolyte at a given molal concentration shows a colligative effect that is:", choices:["Identical to a non‑electrolyte","Identical to a strong electrolyte","Between a non‑electrolyte and a strong electrolyte of the same concentration","Impossible to determine ever"], a:2},
+  {q:"The core reason molarity and normality are unreliable across a temperature range is:", choices:["Because solute moles increase with heat","Because the volume term is temperature‑sensitive due to liquid expansion/contraction","Because normality is undefined at high temperature","Because pH always shifts with molarity"], a:1},
+  {q:"Molality is preferred for temperature‑dependent colligative‑property studies chiefly because:", choices:["It is numerically always larger than molarity","It is defined per kilogram of solvent (a mass, unaffected by temperature)","It requires less solute","It automatically accounts for ionization"], a:1},
+  {q:"A 0.1 m solution of sodium sulfate (a strong electrolyte, dissociating into 3 ions) versus 0.1 m sucrose (non‑electrolyte) at the same molality should show:", choices:["Equal freezing point depression","A considerably larger depression for sodium sulfate","A considerably smaller depression for sodium sulfate","No depression for sodium sulfate"], a:1},
+  {q:"Molecular weight is additive, while a property tied to a specific ionic/atomic arrangement is constitutive, because:", choices:["Additive properties depend on arrangement, constitutive properties depend on the sum","Additive properties are simply summed contributions; constitutive properties depend on how atoms are arranged/structured","Both depend equally on arrangement","Neither depends on atom count"], a:1},
+  {q:"30 g of a non‑electrolyte dissolved in 500 mL of solution gives 0.25 M. The molecular weight of the solute is:", choices:["60 g/mol","120 g/mol","150 g/mol","240 g/mol"], a:3},
+  {q:"For 250 mL of a solution (density 1.20 g/mL) containing 20 g of solute, the solution mass is:", choices:["250 g","270 g","300 g","320 g"], a:2},
+  {q:"Continuing the above (250 mL, density 1.20, 20 g solute), the solvent mass is:", choices:["230 g","250 g","270 g","280 g"], a:3},
+  {q:"Continuing the above, with solute MW 100, the molality is approximately:", choices:["0.400 m","0.556 m","0.714 m","0.800 m"], a:2},
+  {q:"Continuing the above, moles of water (280 g, MW≈18.02) are approximately:", choices:["10.5 mol","15.5 mol","20.0 mol","28.0 mol"], a:1},
+  {q:"Continuing the above, the mole fraction of the solute is approximately:", choices:["0.0071","0.0127","0.0200","0.0400"], a:1},
+  {q:"Gold–silver alloys (Solid‑in‑Solid) and mineral oil in paraffin (Liquid‑in‑Solid) both share which feature, per Table 5‑1 logic?", choices:["A gaseous continuous phase","A liquid continuous phase","A solid continuous phase, differing only in the original state of the dispersed component","Identical particle sizes"], a:2},
+  {q:"Colligative properties give \"regular\" values specifically for non‑electrolytes because:", choices:["Non‑electrolytes have higher molecular weights","Non‑electrolytes maintain a 1:1 ratio between formula units dissolved and particles present","Non‑electrolytes always ionize completely","Non‑electrolytes are always colloids"], a:1},
+  {q:"The same 1 M H2SO4 solution can correctly be described as both 2 N and 1 N because:", choices:["Normality is meaningless for acids","Normality depends on the specific reaction context (equivalents involved), not just the compound's identity","H2SO4 changes molarity depending on reaction","1 M always equals 2 N universally"], a:1},
+  {q:"A solution is 10% w/v. It is necessarily also 10% w/w only if:", choices:["Its density is exactly 1.00 g/mL","Its temperature is 25°C","It is a non‑electrolyte","Its molecular weight is under 100"], a:0},
+  {q:"A substance that only partially ionizes but still conducts a measurable, smaller current is classified as:", choices:["A non‑electrolyte","A weak electrolyte","Not classifiable","A colloid"], a:1},
+  {q:"To obtain 250 mL of a 0.4 M solution of a solute with MW 68, the mass required is:", choices:["3.4 g","6.8 g","17.0 g","27.2 g"], a:1},
+  {q:"Given a 0.4 M solution (MW 68, density 1.05 g/mL) in exactly 1 L, the mass of solute present is:", choices:["6.8 g","17.0 g","27.2 g","40.0 g"], a:2},
+  {q:"Continuing the above (1 L, 0.4 M, MW 68, density 1.05), the solution's total mass is:", choices:["1000 g","1020 g","1050 g","1068 g"], a:2},
+  {q:"Continuing the above, the percentage by weight of the solute is approximately:", choices:["2.59%","4.00%","6.80%","10.5%"], a:0},
+  {q:"Continuing the above, the solvent mass is:", choices:["1000 g","1022.8 g","1027.2 g","1050 g"], a:1},
+  {q:"Continuing the above, the molality is approximately:", choices:["0.320 m","0.391 m","0.400 m","0.420 m"], a:1},
+  {q:"Two isomers with identical molecular formulas (thus identical molecular weight) can still differ in:", choices:["Their additive properties","Their constitutive properties","Their formula weight","Their atom count"], a:1},
+  {q:"If the observed freezing point depression of a 0.1 m solution is only slightly larger (not double/triple) than the non‑electrolyte prediction, the solute is likely:", choices:["A non‑electrolyte","A strong electrolyte fully ionized","A weak electrolyte, partially dissociating","Impossible to have any solute"], a:2},
+  {q:"A particle at exactly 500 nm, per the lecture's cutoffs, should be classified as:", choices:["A true solution","Still within the colloidal dispersion range","Already a coarse dispersion","Undefined"], a:1},
+  {q:"For glucose, which set correctly matches property‑type to example?", choices:["MW is constitutive; optical rotation is additive","MW is additive; a structurally‑dependent property like optical rotation reflects constitutive nature","MW is colligative; solubility is additive","All of glucose's properties are purely colligative"], a:1},
+  {q:"Given full data (mass, volume, density, MW) for a solution, the correct calculation order to reach % w/w, following the lecture's worked method, is:", choices:["% w/w first, then moles, then molarity","Moles → molarity; then solution mass → solvent mass → molality; then mole fractions; then % w/w","Molality first, then molarity, then % w/w, then moles","There is no fixed order needed"], a:1},
+  {q:"Why can % v/v not be computed from the FeSO4 worked example's given data?", choices:["Because % v/v is never a real unit","Because the data provides solute mass but not the solute's own volume","Because FeSO4 is a gas","Because density was not given"], a:1},
+  {q:"As a weak electrolyte's degree of ionization approaches zero, its apparent colligative behavior approaches that of:", choices:["A strong electrolyte at the same concentration","A non‑electrolyte at the same concentration","Pure solvent with no solute","Twice the expected value"], a:1}
+];
+
+const quizSets = { easy: quizBankEasy, medium: quizBankMedium, hard: quizBankHard };
+let currentQuizLevel = 'easy';
 let quizState = [];
 function shuffle(arr){
   const a = arr.slice();
@@ -771,7 +1044,8 @@ function shuffle(arr){
   return a;
 }
 function buildQuizState(){
-  quizState = quizBank.map(item=>{
+  const bank = quizSets[currentQuizLevel];
+  quizState = bank.map(item=>{
     const correctText = item.choices[item.a];
     const shuffled = shuffle(item.choices);
     return { q:item.q, choices:shuffled, correctText, answered:false };
@@ -820,6 +1094,16 @@ document.getElementById('restartQuiz').addEventListener('click',()=>{
   score = 0; answeredCount = 0;
   buildQuizState();
   renderQuiz();
+});
+document.querySelectorAll('#quizLevelRow .filter-chip').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#quizLevelRow .filter-chip').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentQuizLevel = btn.dataset.level;
+    score = 0; answeredCount = 0;
+    buildQuizState();
+    renderQuiz();
+  });
 });
 buildQuizState();
 renderQuiz();
